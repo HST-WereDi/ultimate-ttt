@@ -74,6 +74,18 @@ class SmallBoard {
         }
         return copy;
     }
+    isFull() {
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                if (this.cell(r, c) === ".")
+                    return false;
+            }
+        }
+        return true;
+    }
+    getCell(row, col) {
+        return this.cell(row, col);
+    }
 }
 exports.SmallBoard = SmallBoard;
 //# sourceMappingURL=SmallBoard.js.map

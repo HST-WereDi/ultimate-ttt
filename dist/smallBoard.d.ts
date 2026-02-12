@@ -8,5 +8,7 @@ export declare class SmallBoard {
     toString(): string;
     getWinner(): Mark | null;
     clone(): SmallBoard;
+    isFull(): boolean;
+    getCell(row: number, col: number): Mark;
 }
 //# sourceMappingURL=SmallBoard.d.ts.map

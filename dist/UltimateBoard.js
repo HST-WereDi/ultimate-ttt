@@ -5,6 +5,11 @@ const SmallBoard_1 = require("./SmallBoard");
 class UltimateBoard {
     boards;
     nextBoard;
+    macroMark(boardRow, boardCol) {
+        const b = this.getSmallBoard(boardRow, boardCol);
+        const w = b.getWinner();
+        return w ?? ".";
+    }
     constructor(boards, nextBoard = null) {
         if (boards) {
             this.boards = boards;
@@ -67,9 +72,60 @@ class UltimateBoard {
         const newNext = { row: move.cellRow, col: move.cellCol };
         return new UltimateBoard(newBoards, newNext);
     }
-    isBoardPlayable(boardRow, boardCol) {
-        const b = this.getSmallBoard(boardRow, boardCol);
-        return b.getWinner() === null;
+    isBoardPlayable(row, col) {
+        const b = this.getSmallBoard(row, col);
+        return b.getWinner() === null && !b.isFull();
+    }
+    getWinner() {
+        const lines = [
+            [this.macroMark(0, 0), this.macroMark(0, 1), this.macroMark(0, 2)],
+            [this.macroMark(1, 0), this.macroMark(1, 1), this.macroMark(1, 2)],
+            [this.macroMark(2, 0), this.macroMark(2, 1), this.macroMark(2, 2)],
+            [this.macroMark(0, 0), this.macroMark(1, 0), this.macroMark(2, 0)],
+            [this.macroMark(0, 1), this.macroMark(1, 1), this.macroMark(2, 1)],
+            [this.macroMark(0, 2), this.macroMark(1, 2), this.macroMark(2, 2)],
+            [this.macroMark(0, 0), this.macroMark(1, 1), this.macroMark(2, 2)],
+            [this.macroMark(0, 2), this.macroMark(1, 1), this.macroMark(2, 0)],
+        ];
+        for (const line of lines) {
+            const a = line[0];
+            const b = line[1];
+            const c = line[2];
+            if (!a || !b || !c)
+                continue;
+            if (a !== "." && a === b && b === c) {
+                return a;
+            }
+        }
+        return null;
+    }
+    legalMoves() {
+        const moves = [];
+        const addMovesFromBoard = (br, bc) => {
+            const b = this.getSmallBoard(br, bc);
+            // Alleen als het minibord speelbaar is
+            if (!this.isBoardPlayable(br, bc))
+                return;
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    if (b.getCell(r, c) === ".") {
+                        moves.push({ boardRow: br, boardCol: bc, cellRow: r, cellCol: c });
+                    }
+                }
+            }
+        };
+        // Constraint: als nextBoard speelbaar is -> alleen daar
+        if (this.nextBoard && this.isBoardPlayable(this.nextBoard.row, this.nextBoard.col)) {
+            addMovesFromBoard(this.nextBoard.row, this.nextBoard.col);
+            return moves;
+        }
+        // Anders: alle speelbare miniborden
+        for (let br = 0; br < 3; br++) {
+            for (let bc = 0; bc < 3; bc++) {
+                addMovesFromBoard(br, bc);
+            }
+        }
+        return moves;
     }
 }
 exports.UltimateBoard = UltimateBoard;
