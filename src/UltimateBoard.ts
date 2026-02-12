@@ -35,6 +35,13 @@ export class UltimateBoard {
     }
 
     public applyMove(move: Move, mark: Mark): UltimateBoard {
+
+        if (this.nextBoard && this.isBoardPlayable(this.nextBoard.row, this.nextBoard.col)) {
+            if (move.boardRow !== this.nextBoard.row || move.boardCol !== this.nextBoard.col) {
+                throw new Error("Illegal move: must play in the constrained small board");
+            }
+        }
+
         const targetBoard = this.getSmallBoard(move.boardRow, move.boardCol).clone();
 
         const ok = targetBoard.place(move.cellRow, move.cellCol, mark);
@@ -79,6 +86,10 @@ export class UltimateBoard {
         return new UltimateBoard(newBoards, newNext);
     }
 
+    public isBoardPlayable(boardRow: number, boardCol: number): boolean {
+        const b = this.getSmallBoard(boardRow, boardCol);
+        return b.getWinner() === null;
+    }
 
 
 

@@ -12,5 +12,6 @@ export declare class UltimateBoard {
     } | null);
     getSmallBoard(boardRow: number, boardCol: number): SmallBoard;
     applyMove(move: Move, mark: Mark): UltimateBoard;
+    isBoardPlayable(boardRow: number, boardCol: number): boolean;
 }
 //# sourceMappingURL=UltimateBoard.d.ts.map

@@ -30,6 +30,11 @@ class UltimateBoard {
         return b;
     }
     applyMove(move, mark) {
+        if (this.nextBoard && this.isBoardPlayable(this.nextBoard.row, this.nextBoard.col)) {
+            if (move.boardRow !== this.nextBoard.row || move.boardCol !== this.nextBoard.col) {
+                throw new Error("Illegal move: must play in the constrained small board");
+            }
+        }
         const targetBoard = this.getSmallBoard(move.boardRow, move.boardCol).clone();
         const ok = targetBoard.place(move.cellRow, move.cellCol, mark);
         if (!ok) {
@@ -61,6 +66,10 @@ class UltimateBoard {
         macroRow[move.boardCol] = targetBoard;
         const newNext = { row: move.cellRow, col: move.cellCol };
         return new UltimateBoard(newBoards, newNext);
+    }
+    isBoardPlayable(boardRow, boardCol) {
+        const b = this.getSmallBoard(boardRow, boardCol);
+        return b.getWinner() === null;
     }
 }
 exports.UltimateBoard = UltimateBoard;
