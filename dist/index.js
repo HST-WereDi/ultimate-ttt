@@ -1,12 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const SmallBoard_1 = require("./SmallBoard");
-const b = new SmallBoard_1.SmallBoard();
-const w = new SmallBoard_1.SmallBoard();
-w.place(0, 0, "X");
-w.place(0, 1, "X");
-w.place(0, 2, "X");
-console.log("\nWinner test board:");
-console.log(w.toString());
-console.log("Winner:", w.getWinner());
+const UltimateBoard_1 = require("./UltimateBoard");
+const u0 = new UltimateBoard_1.UltimateBoard();
+const u1 = u0.applyMove({ boardRow: 0, boardCol: 0, cellRow: 1, cellCol: 1 }, "X");
+console.log("\nNext board should be (1,1):", u1.nextBoard);
 //# sourceMappingURL=index.js.map

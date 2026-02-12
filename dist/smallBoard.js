@@ -62,6 +62,18 @@ class SmallBoard {
         }
         return null;
     }
+    clone() {
+        const copy = new SmallBoard();
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                const value = this.cell(r, c);
+                if (value !== ".") {
+                    copy.place(r, c, value);
+                }
+            }
+        }
+        return copy;
+    }
 }
 exports.SmallBoard = SmallBoard;
 //# sourceMappingURL=SmallBoard.js.map

@@ -1,14 +1,20 @@
 export type Mark = "X" | "O" | ".";
+export type Move = {
+    boardRow: number; // 0..2
+    boardCol: number; // 0..2
+    cellRow: number;  // 0..2
+    cellCol: number;  // 0..2
+};
 
 import { SmallBoard } from "./SmallBoard";
 
-const b = new SmallBoard();
+import { UltimateBoard } from "./UltimateBoard";
 
-const w = new SmallBoard();
-w.place(0, 0, "X");
-w.place(0, 1, "X");
-w.place(0, 2, "X");
-console.log("\nWinner test board:");
-console.log(w.toString());
-console.log("Winner:", w.getWinner());
+const u0 = new UltimateBoard();
 
+const u1 = u0.applyMove(
+  { boardRow: 0, boardCol: 0, cellRow: 1, cellCol: 1 },
+  "X"
+);
+
+console.log("\nNext board should be (1,1):", u1.nextBoard);
