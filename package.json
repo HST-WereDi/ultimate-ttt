@@ -6,6 +6,11 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+
+    "dev": "vite",
+    "build:ui": "vite build",
+    "preview": "vite preview",
+
     "test": "vitest run tests",
     "test:watch": "vitest",
     "docs": "typedoc"
@@ -14,8 +19,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "typedoc": "^0.28.16",
     "typescript": "^5.9.3",
+    "vite": "^7.3.1",
     "vitest": "^4.0.18"
   }
 }

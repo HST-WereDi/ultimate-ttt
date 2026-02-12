@@ -1,186 +1,181 @@
-Ultimate Tic Tac Toe Engine – Architecture Overview
-1. Design Goals
+# Ultimate Tic Tac Toe – Architecture
 
-The engine is designed with the following principles:
+## 1. Design Principles
 
-Correctness first
+The project is built around the following principles:
 
-Immutable game state
+- Correctness first
+- Immutable state
+- Deterministic behavior
+- Strict type safety
+- Clear separation between engine and UI
 
-Strict type safety (TypeScript strict mode)
+The engine is completely UI-agnostic.
 
-No side effects
+---
 
-Deterministic behavior (AI- and multiplayer-safe)
+## 2. Layered Structure
+src/
+engine/
+UI/
 
-The engine is UI-agnostic and contains no rendering logic.
 
-2. Core Concepts
-2.1 SmallBoard
+### Engine (src/engine)
+
+Pure logic layer.
+
+Contains:
+
+- SmallBoard
+- UltimateBoard
+- Game
+
+No rendering.
+No side effects.
+No randomness.
+No networking.
+
+---
+
+### UI (src/UI)
+
+React-based frontend.
+
+Responsibilities:
+
+- Rendering the board
+- Handling user interaction
+- Highlighting the constrained board
+- Displaying status and result modal
+
+The UI consumes engine state but never mutates it.
+
+---
+
+## 3. SmallBoard
 
 Represents a single 3×3 Tic Tac Toe board.
 
 Responsibilities:
 
-Store cell state
+- Store cell state
+- Validate placements
+- Detect local winner
+- Detect full state
+- Support cloning
 
-Validate placements
+Internally mutable, but only modified through cloning at higher levels.
 
-Detect local winners
+---
 
-Detect full-board (draw) state
+## 4. UltimateBoard
 
-Support cloning for immutable macro state updates
-
-Characteristics:
-
-Internally mutable
-
-Treated as immutable at the UltimateBoard level (via cloning)
-
-2.2 UltimateBoard
-
-Represents the full 3×3 grid of SmallBoard instances.
+Represents the 3×3 grid of SmallBoard instances.
 
 Responsibilities:
 
-Store macro structure
+- Enforce Ultimate Tic Tac Toe constraint rules
+- Apply moves immutably
+- Detect macro winner
+- Detect draw (classic and forced)
+- Generate legal moves
 
-Enforce Ultimate Tic Tac Toe move constraints
+Immutability model:
 
-Apply moves immutably
+- `applyMove()` returns a new UltimateBoard
+- Only the targeted SmallBoard is cloned
+- Existing board instances are never modified
 
-Detect macro winner
+---
 
-Detect macro draw
+## 5. Game
 
-Generate legal moves
+Pure immutable state machine.
 
-Immutability Model
+Responsibilities:
 
-UltimateBoard is immutable:
+- Track current player
+- Enforce turn order
+- Validate moves
+- Expose overall status
+- Provide render-safe snapshot via `getView()`
 
-applyMove() returns a new instance
+Move APIs:
 
-Existing instances are never modified
+- `applyMove()` → strict, throws on illegal move
+- `tryApplyMove()` → safe wrapper returning null
 
-Only the targeted SmallBoard is cloned and changed
+---
 
-This design simplifies:
+## 6. Constraint System
 
-AI search (minimax / MCTS)
-
-Multiplayer synchronization
-
-Time-travel debugging
-
-State comparison
-
-3. Move Constraint System
-
-After a move is played in:
+After a move in:
 
 (boardRow, boardCol) → (cellRow, cellCol)
 
-
-The next move is constrained to:
+The next move must be played in:
 
 (cellRow, cellCol)
 
+If that board is:
 
-If that small board:
+- won, or
+- full,
 
-is won, or
+the constraint is lifted (`nextBoard === null`).
 
-is full
+---
 
-then the constraint is lifted.
+## 7. Draw Detection
 
-nextBoard === null means free choice.
+Two draw modes exist:
 
-4. Game State Evaluation
-Macro Winner
+### Classic Draw
 
-A macro winner occurs when three small boards in a row, column, or diagonal are won by the same player.
+- No macro winner
+- No legal moves remain
 
-Draw
+### Forced Draw
 
-A draw occurs when:
+- No macro winner
+- No possible macro winning line for either player
 
-There is no macro winner
+Forced draw detection prevents unnecessary continued play when a win is mathematically impossible.
 
-No legal moves remain
+---
 
-5. Legal Move Generation
+## 8. Determinism
 
-legalMoves() returns:
+The engine guarantees:
 
-All empty cells inside the constrained small board
+- No hidden state
+- No time dependency
+- No randomness
+- Referential transparency
 
-Or all empty cells in all playable small boards if no constraint applies
+This makes it safe for:
 
-This method is critical for:
+- AI search (minimax / MCTS)
+- Multiplayer synchronization
+- State comparison
+- Snapshot testing
 
-Game validation
+---
 
-AI move generation
-
-Multiplayer verification
-
-Draw detection
-
-6. Error Handling Philosophy
-
-Errors are thrown when:
-
-A move is applied after game over
-
-A move violates constraint rules
-
-A move targets an invalid or occupied cell
-
-Internal invariants are violated
-
-Out-of-range access is treated as a programming error, not user error.
-
-7. Current Engine Scope
+## 9. Current Scope (v1)
 
 Implemented:
 
-SmallBoard logic
-
-UltimateBoard logic
-
-Immutability enforcement
-
-Macro winner detection
-
-Draw detection
-
-Legal move generation
-
-Full unit test coverage
+- Full engine
+- Game state machine
+- Forced draw logic
+- Responsive React UI
+- Win/draw modal
+- Comprehensive unit tests
 
 Not yet implemented:
 
-Turn tracking
-
-Game class
-
-AI player
-
-WebSocket multiplayer
-
-UI integration
-
-8. Next Step
-
-Introduce a Game class responsible for:
-
-Current player tracking
-
-Applying moves via UltimateBoard
-
-Exposing overall status (playing | won | draw)
-
-Enforcing turn order
+- AI agents
+- Multiplayer
+- Server deployment
+- Rating system

@@ -1,0 +1,148 @@
+:root {
+  /* micro-board grootte op basis van schermhoogte */
+  --board: clamp(140px, 22vh, 200px);
+
+  /* cel grootte volgt board: (board - padding*2 - gaps*2) / 3 */
+  /* we kiezen vaste padding/gap en laten cell dmv clamp meeschalen */
+  --cell: clamp(34px, calc(var(--board) / 4), 54px);
+
+  --gap-macro: clamp(6px, 1.2vh, 12px);
+  --gap-micro: clamp(3px, 0.8vh, 6px);
+  --pad-board: clamp(4px, 0.9vh, 10px);
+}
+
+body {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub {
+  font-size: 14px;
+  color: #666;
+}
+
+button {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.macro-board {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: var(--gap-macro);
+  justify-content: center;
+}
+
+.micro-board {
+  width: var(--board);
+  height: var(--board);
+  border: 3px solid black;
+  padding: var(--pad-board);
+  background: white;
+  position: relative;
+
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+}
+
+.micro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell));
+  grid-template-rows: repeat(3, var(--cell));
+  gap: var(--gap-micro);
+}
+
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  font-size: clamp(16px, calc(var(--cell) * 0.45), 28px);
+  font-weight: bold;
+  border: 1px solid #999;
+  background: white;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.cell:hover:enabled {
+  background: #eee;
+}
+
+.active {
+  border: 5px solid black;
+}
+
+.dimmed {
+  opacity: 0.4;
+}
+
+.winner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 64px;
+  font-weight: bold;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: white;
+  border: 2px solid black;
+  border-radius: 14px;
+  padding: 18px 20px;
+  width: min(360px, 90vw);
+  box-sizing: border-box;
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
+
+.modalTitle {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.modalBtn {
+  padding: 10px 12px;
+  border: 1px solid #999;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+}
+
+.modalBtn:hover {
+  background: #f2f2f2;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modalBtn.secondary {
+  background: #f7f7f7;
+}

@@ -8,3 +8,5 @@ export type Move = {
 
 export { SmallBoard } from "./SmallBoard.js";
 export { UltimateBoard } from "./UltimateBoard.js";
+export { Game } from "./Game.js";
+export type { GameStatus } from "./Game.js";

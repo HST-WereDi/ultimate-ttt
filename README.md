@@ -1,178 +1,182 @@
-Ultimate Tic Tac Toe Engine
+# Ultimate Tic Tac Toe
 
-A fully type-safe, immutable Ultimate Tic Tac Toe engine written in TypeScript.
+A fully type-safe, immutable Ultimate Tic Tac Toe implementation written in TypeScript.
 
-This project focuses purely on engine correctness and deterministic game logic.
-No UI or networking code is included in the core engine.
+This project contains:
 
-✨ Features
+- A deterministic, side-effect free engine
+- An immutable Game state machine
+- A responsive React UI (Vite)
+- Comprehensive unit tests (Vitest)
 
-Immutable game state
+Engine correctness is the highest priority.
 
-Strict TypeScript configuration
+---
 
-Full rule enforcement
+## Features
 
-Macro winner detection
+### Engine
 
-Draw detection
+- Immutable game state
+- Strict TypeScript configuration
+- Deterministic behavior
+- Full rule enforcement
+- Constraint system (`nextBoard`)
+- Macro winner detection
+- Classic draw detection (no moves left)
+- Forced draw detection (no macro winner possible)
+- Legal move generation
+- Safe `tryApplyMove()` API
+- Comprehensive unit tests
 
-Legal move generation
+### UI (v1)
 
-Comprehensive unit tests (Vitest)
+- Responsive layout (viewport scaling)
+- Active next-board highlighting
+- Win / draw modal
+- Close and Play Again options
+- Clean separation from engine
+- No Tailwind dependency
 
-🧱 Architecture Overview
+---
 
-The engine is built around two core classes:
+## Architecture Overview
+src/
+engine/
+SmallBoard.ts
+UltimateBoard.ts
+Game.ts
+index.ts
+UI/
+UltimateBoard.tsx
 
-SmallBoard
 
-Represents a single 3×3 Tic Tac Toe board.
+### Engine Layer
 
-Responsibilities:
+Pure logic only.
 
-Store cell state
+- No React
+- No DOM
+- No randomness
+- No side effects
 
-Validate placements
+### UI Layer
 
-Detect local winners
+React + Vite frontend.
 
-Detect local draws
+Uses:
 
-Support cloning
+- `Game.getView()` for rendering
+- `tryApplyMove()` for safe interaction
 
-Internally mutable, but used immutably at higher levels.
+The UI never mutates engine state.
 
-UltimateBoard
+---
 
-Represents the 3×3 grid of SmallBoard instances.
+## Immutability Model
 
-Responsibilities:
+- `SmallBoard` is internally mutable but cloned before modification.
+- `UltimateBoard` is immutable.
+- `Game` is immutable.
+- `applyMove()` always returns a new instance.
 
-Enforce Ultimate Tic Tac Toe constraint rules
+Safe for:
 
-Apply moves immutably
+- AI search
+- Multiplayer synchronization
+- State comparison
+- Time-travel debugging
 
-Detect macro winner
+---
 
-Detect macro draw
+## Rule System
 
-Generate legal moves
-
-applyMove() always returns a new UltimateBoard instance.
-
-🔁 Immutability Model
-
-The engine uses an immutable macro state model:
-
-UltimateBoard instances are never mutated.
-
-applyMove() returns a new board.
-
-Only the targeted SmallBoard is cloned and modified.
-
-This makes the engine:
-
-Safe for AI search (minimax / MCTS)
-
-Safe for multiplayer synchronization
-
-Deterministic and side-effect free
-
-🎮 Rule Enforcement
-
-After a move is played in:
+After a move in:
 
 (boardRow, boardCol) → (cellRow, cellCol)
-
 
 The next move is constrained to:
 
 (cellRow, cellCol)
 
+If that small board:
 
-If the constrained board is:
+- is already won, or
+- is full,
 
-already won, or
+the constraint is lifted (`nextBoard === null`).
 
-completely full,
+---
 
-the constraint is lifted.
+## Draw Conditions
 
-🧪 Testing
+A game is a draw if:
 
-Unit tests are written using Vitest.
+1. No macro winner exists, and
+2. Either:
+   - No legal moves remain (classic draw), or
+   - A macro winner is no longer possible for either player (forced draw)
+
+---
+
+## Testing
+
+Tests are written using Vitest.
 
 Run all tests:
 
 npm test
 
+Tests verify:
 
-The test suite verifies:
+- SmallBoard behavior
+- Constraint enforcement
+- Immutability guarantees
+- Winner detection
+- Classic draw detection
+- Forced draw detection
+- Game.tryApplyMove behavior
 
-SmallBoard behavior
+---
 
-Winner detection
+## Development
 
-Draw detection
+Start dev server:
 
-Constraint enforcement
-
-Immutability guarantees
-
-Legal move generation
-
-📚 Documentation
-
-API documentation is generated using TypeDoc.
-
-Generate docs:
-
-npm run docs
-
-
-Open:
-
-/docs/index.html
-
-🚀 Planned Features
-
-Game class with turn tracking
-
-AI player (minimax)
-
-WebSocket multiplayer
-
-React frontend
-
-Room-based multiplayer sessions
-
-🛠 Development
+npm run dev
 
 Build:
 
 npm run build
 
-
-Run tests:
-
-npm test
-
-
-Generate docs:
+Generate documentation:
 
 npm run docs
 
-📦 Tech Stack
+---
 
-TypeScript (strict mode)
+## Tech Stack
 
-ES Modules (nodenext)
+- TypeScript (strict mode)
+- ES Modules
+- React
+- Vite
+- Vitest
+- TypeDoc
 
-Vitest
+---
 
-TypeDoc
+## Roadmap
 
-📄 License
+- RandomAgent
+- MinimaxAgent
+- Online multiplayer (WebSockets)
+- Room system
+- ELO rating system
+- Server deployment
+
+---
+
+## License
 
 MIT

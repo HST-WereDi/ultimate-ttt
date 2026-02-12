@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 
-import { SmallBoard } from "../src/SmallBoard.js";
-import { UltimateBoard } from "../src/UltimateBoard.js";
-import type { Mark, Move } from "../src/index.js";
+import { SmallBoard } from "../src/engine/SmallBoard.js";
+import { UltimateBoard } from "../src/engine/UltimateBoard.js";
+import type { Mark, Move } from "../src/engine/index.js";
 
 /**
  * Helpers

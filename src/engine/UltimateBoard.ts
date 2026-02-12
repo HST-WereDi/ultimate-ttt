@@ -202,9 +202,18 @@ export class UltimateBoard {
 
         macroRow[move.boardCol] = targetBoard;
 
-        const newNext = { row: move.cellRow, col: move.cellCol };
+        const tentativeNext = { row: move.cellRow, col: move.cellCol };
 
-        return new UltimateBoard(newBoards, newNext);
+        // Maak eerst de nieuwe staat met constraint
+        const constrained = new UltimateBoard(newBoards, tentativeNext);
+
+        // Als dat miniboard niet speelbaar is -> constraint vervalt
+        if (!constrained.isBoardPlayable(tentativeNext.row, tentativeNext.col)) {
+        return new UltimateBoard(newBoards, null);
+        }
+
+        return constrained;
+
     }
 
     /**
@@ -272,22 +281,66 @@ export class UltimateBoard {
         return null;
     }
 
+
+    private isMacroWinStillPossibleFor(player: Exclude<Mark, ".">): boolean {
+        // cell kan zijn: X-won, O-won, open (nog niet vol/gewonnen), draw (vol zonder winnaar)
+        const isCellOkFor = (br: number, bc: number) => {
+            const sb = this.getSmallBoard(br, bc);
+            const w = sb.getWinner();
+            if (w === player) return true;          // al van player
+            if (w !== null) return false;           // gewonnen door tegenstander -> blokkeert
+            if (sb.isFull()) return false;          // draw miniboard -> blokkeert voor beiden
+            return true;                             // open miniboard -> kan nog
+        };
+
+        const lines = [
+            [[0, 0], [0, 1], [0, 2]],
+            [[1, 0], [1, 1], [1, 2]],
+            [[2, 0], [2, 1], [2, 2]],
+            [[0, 0], [1, 0], [2, 0]],
+            [[0, 1], [1, 1], [2, 1]],
+            [[0, 2], [1, 2], [2, 2]],
+            [[0, 0], [1, 1], [2, 2]],
+            [[0, 2], [1, 1], [2, 0]],
+        ] as const;
+
+        return lines.some((line) =>
+            line.every(([br, bc]) => isCellOkFor(br, bc))
+        );
+    }
+
+    private isNoMacroWinnerPossible(): boolean {
+        return (
+            !this.isMacroWinStillPossibleFor("X") &&
+            !this.isMacroWinStillPossibleFor("O")
+        );
+    }
+
+
     /**
      * Determines whether the game has ended in a draw.
      *
      * A draw occurs when:
-     * - There is no macro winner, and
-     * - No legal moves remain.
+     * - There is no macro winner, and either:
+     *   - No legal moves remain (classic draw), or
+     *   - A macro winner is no longer possible for either player (forced draw).
      *
-     * @returns `true` if the game is a draw, otherwise `false`
+     * @returns `true` if the game is a draw, otherwise `false`.
      *
      * Note:
      * This method should be checked after {@link getWinner()} when
      * evaluating overall game state.
      */
     public isDraw(): boolean {
-        return this.getWinner() === null && this.legalMoves().length === 0;
+        if (this.getWinner() !== null) return false;
+
+        // klassiek: geen zetten meer
+        if (this.legalMoves().length === 0) return true;
+
+        // nieuw: forced draw (geen macro-winnaar meer mogelijk)
+        return this.isNoMacroWinnerPossible();
     }
+
 
 
     /**
