@@ -25,3 +25,7 @@ Thumbs.db
 # editor
 .vscode/
 .idea/
+
+# generated test files
+*.d.ts.map
+*.d.ts
