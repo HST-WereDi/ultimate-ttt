@@ -2,11 +2,15 @@ import React, { useState } from "react";
 import { UltimateBoard } from "./UltimateBoard";
 import { Landing } from "./Landing";
 import { Rules } from "./Rules";
+import { BotSelect } from "./BotSelect";
+import { SinglePlayer } from "./SinglePlayer";
+import type { BotId } from "../engine/ai/types";
 
-type Screen = "landing" | "local" | "ai" | "rules";
+type Screen = "landing" | "local" | "ai_select" | "ai_play" | "rules";
 
 export function App() {
   const [screen, setScreen] = useState<Screen>("landing");
+  const [botId, setBotId] = useState<BotId>("billy-random");
 
   if (screen === "local") {
     return <UltimateBoard onBack={() => setScreen("landing")} />;
@@ -16,25 +20,26 @@ export function App() {
     return <Rules onBack={() => setScreen("landing")} />;
   }
 
-  if (screen === "ai") {
-    // placeholder tot je AI er is
+    if (screen === "ai_select") {
     return (
-      <div className="utt-shell">
-        <div className="utt-panel utt-card">
-          <h1 className="utt-title utt-h1">Single Player</h1>
-          <p className="utt-muted">The AI is still sleeping in the crypt…</p>
-          <button className="utt-btn" onClick={() => setScreen("landing")}>
-            Back
-          </button>
-        </div>
-      </div>
+        <BotSelect
+        onBack={() => setScreen("landing")}
+        onChoose={(id) => {
+            setBotId(id);
+            setScreen("ai_play");
+        }}
+        />
     );
-  }
+    }
+
+    if (screen === "ai_play") {
+    return <SinglePlayer botId={botId} onBack={() => setScreen("ai_select")} />;
+    }
 
   return (
     <Landing
       onLocal={() => setScreen("local")}
-      onAI={() => setScreen("ai")}
+        onAI={() => setScreen("ai_select")}
       onRules={() => setScreen("rules")}
     />
   );

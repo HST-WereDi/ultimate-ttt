@@ -79,7 +79,7 @@ body {
 }
 
 .utt-muted {
-  color: grey;
+  color: rgb(50,50,50);
 }
 
 /* Buttons (apply class="utt-btn") */
