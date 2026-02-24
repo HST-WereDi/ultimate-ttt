@@ -63,18 +63,28 @@ export function UltimateBoard() {
 
   return (
     <div className="container">
-      <div className="headerActions">
-        <button
-          className="secondary"
-          onClick={() => setShowDebug((v) => !v)}
-          type="button"
-        >
-          Debug
-        </button>
+      <div className="topBar">
+        <div className="headerActions">
+          <button
+            className="secondary"
+            onClick={() => setShowDebug((v) => !v)}
+            type="button"
+          >
+            Debug
+          </button>
 
-        <button onClick={reset} type="button">
-          Reset
-        </button>
+          <button onClick={reset} type="button">
+            Reset
+          </button>
+        </div>
+
+        {view.status.kind === "playing" && (
+          <div className="turnHero">
+            <div className={`turnText player-${view.currentPlayer}`}>
+              {view.currentPlayer}<span className='smallTurnText'> to play</span>
+            </div>
+          </div>
+        )}
       </div>
 
       {showDebug && (
@@ -133,7 +143,7 @@ export function UltimateBoard() {
                       return (
                         <button
                           key={`${cr}-${cc}`}
-                          className="cell"
+                          className={`cell ${mark !== "." ? mark : ""}`}
                           disabled={!canClick}
                           onClick={() => handleClick(move)}
                           type="button"
@@ -146,7 +156,9 @@ export function UltimateBoard() {
                 </div>
 
                 {small.winner && (
-                  <div className="winner-overlay">{small.winner}</div>
+                  <div className={`winner-overlay ${small.winner}`}>
+                    {small.winner}
+                  </div>
                 )}
               </div>
             );

@@ -54,7 +54,7 @@ html, body {
 body {
   margin: 0;
   color: var(--fg);
-  font-family: var(--font-ui);
+  font-family: 'MedievalSharp', cursive;
   background:
     radial-gradient(900px 600px at 20% 10%, rgba(139, 92, 246, 0.20), transparent 60%),
     radial-gradient(800px 500px at 80% 20%, rgba(34, 211, 238, 0.14), transparent 65%),

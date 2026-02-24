@@ -9,11 +9,13 @@
   --gap-macro: clamp(6px, 1.2vh, 12px);
   --gap-micro: clamp(3px, 0.8vh, 6px);
   --pad-board: clamp(4px, 0.9vh, 10px);
+  --player-x: #2563eb; /* blauw */
+  --player-o: #dc2626; /* rood */
 }
 
 body {
   margin: 20px;
-  font-family: Arial, sans-serif;
+  font-family: 'MedievalSharp', cursive;
 }
 
 .container {
@@ -74,6 +76,16 @@ button {
   background: white;
   cursor: pointer;
   box-sizing: border-box;
+  font-family: 'MedievalSharp', cursive;
+}
+
+/* Als jouw JSX className="cell X" gebruikt */
+.cell.X {
+  color: var(--player-x);
+}
+
+.cell.O {
+  color: var(--player-o);
 }
 
 .cell:hover:enabled {
@@ -177,4 +189,91 @@ button.secondary {
 .debugHint {
   font-size: 12px;
   color: #666;
+}
+
+/* =========================
+   TOP BAR LAYOUT
+========================= */
+
+.topBar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* knoppen links */
+.headerActions {
+  position: absolute;
+  left: 0;
+  display: flex;
+  gap: 10px;
+}
+
+/* HERO TURN DISPLAY */
+
+.turnHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px 50px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.turnText {
+  font-size: 40px;
+  letter-spacing: 2px;
+}
+
+/* AAN ZET tekst */
+.turnLabel {
+  font-size: 13px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  color: #000; /* nu zwart */
+}
+
+/* Grote hero X of O */
+.turnPlayer {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1;
+  margin-top: 6px;
+
+  /* zwaard-effect */
+  text-shadow:
+    0 2px 0 #fff,
+    0 4px 6px rgba(0, 0, 0, 0.3);
+
+  transform: skew(-4deg);
+}
+
+.player-X {
+  color: var(--player-x);
+}
+
+.player-O {
+  color: var(--player-o);
+}
+
+.winner-overlay.X {
+  color: var(--player-x);
+}
+
+.winner-overlay.O {
+  color: var(--player-o);
+}
+
+.smallTurnText {
+  font-size: 25px;
+  color: black;
 }
