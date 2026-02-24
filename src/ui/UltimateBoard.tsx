@@ -5,6 +5,7 @@ import type { Move } from "../engine/index.js";
 export function UltimateBoard() {
   const [game, setGame] = useState(() => new Game());
   const view = useMemo(() => game.getView(), [game]);
+  const [showDebug, setShowDebug] = useState(false);
 
   const isOver = view.status.kind !== "playing";
 
@@ -34,30 +35,67 @@ export function UltimateBoard() {
     setShowResult(true);
   }
 
+  function playRandomMoves(count: number) {
+    setGame((prev) => {
+      let g = prev;
+
+      for (let i = 0; i < count; i++) {
+        if (g.getStatus().kind !== "playing") break;
+
+        const moves = g.legalMoves();
+        if (moves.length === 0) break;
+
+        const pick = moves[Math.floor(Math.random() * moves.length)];
+        if (!pick) break;
+
+        const next = g.tryApplyMove(pick);
+        if (!next) break;
+        g = next;
+      }
+
+      return g;
+    });
+  }
+
+  function playToEnd(maxPlies: number = 300) {
+    playRandomMoves(maxPlies);
+  }
+
   return (
     <div className="container">
-      <div className="header">
-        <div>
-          {view.status.kind === "playing" ? (
-            <>
-              <div>Aan zet: {view.currentPlayer}</div>
-              <div className="sub">
-                {view.nextBoard
-                  ? `Volgend miniboard: (${view.nextBoard.row}, ${view.nextBoard.col})`
-                  : "Vrije keuze"}
-              </div>
-            </>
-          ) : view.status.kind === "won" ? (
-            <div>Gewonnen: {view.status.winner}</div>
-          ) : (
-            <div>Gelijkspel</div>
-          )}
-        </div>
+      <div className="headerActions">
+        <button
+          className="secondary"
+          onClick={() => setShowDebug((v) => !v)}
+          type="button"
+        >
+          Debug
+        </button>
 
         <button onClick={reset} type="button">
           Reset
         </button>
       </div>
+
+      {showDebug && (
+        <div className="debugPanel">
+          <div className="debugRow">
+            <button onClick={() => playRandomMoves(1)} type="button">Random 1</button>
+            <button onClick={() => playRandomMoves(5)} type="button">Random 5</button>
+            <button onClick={() => playRandomMoves(20)} type="button">Random 20</button>
+            <button onClick={() => playToEnd()} type="button">Finish game</button>
+          </div>
+
+          <div className="debugRow">
+            <button onClick={() => setShowResult(true)} type="button">Show result modal</button>
+            <button onClick={() => setShowResult(false)} type="button">Hide result modal</button>
+          </div>
+
+          <div className="debugHint">
+            Tip: gebruik “Finish game” om snel je overlays / eindscherm te testen.
+          </div>
+        </div>
+      )}
 
       <div className="macro-board">
         {view.boards.map((row, br) =>
