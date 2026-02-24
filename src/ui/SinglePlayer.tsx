@@ -15,6 +15,7 @@ export function SinglePlayer({
 }) {
   const [game, setGame] = useState(() => new Game());
   const view = useMemo(() => game.getView(), [game]);
+  const AI_MOVE_DELAY = 1000; // ms
 
   const bot = useMemo(() => {
     const found = BOTS.find((b) => b.id === botId);
@@ -51,7 +52,7 @@ export function SinglePlayer({
     const t = window.setTimeout(() => {
       const next = game.tryApplyMove(move);
       if (next) setGame(next);
-    }, 1000);
+    }, AI_MOVE_DELAY);
 
     return () => window.clearTimeout(t);
   }, [ai, bot, game, isOver, view.currentPlayer]);
