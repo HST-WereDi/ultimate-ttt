@@ -286,7 +286,6 @@ button.secondary {
   place-items: center;
   padding: 28px 16px;
   box-sizing: border-box;
-  color: grey;
 }
 
 .utt-card {
@@ -341,12 +340,13 @@ button.secondary {
 .utt-rules h2 {
   margin: 10px 0 0;
   font-size: 18px;
+  color: black;
 }
 
 .utt-rules p {
   margin: 0;
   line-height: 1.5;
-  color: var(--fg-muted);
+  color: rgb(30, 30, 30);
 }
 
 .utt-rules-actions {

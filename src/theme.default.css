@@ -87,7 +87,7 @@ body {
   appearance: none;
   border: 1px solid var(--btn-border);
   background: linear-gradient(180deg, var(--btn-bg), rgba(255, 255, 255, 0.06));
-  color: var(--fg);
+  color: grey;
   border-radius: 999px;
   padding: 10px 16px;
   box-shadow: var(--shadow-2), var(--inner);
