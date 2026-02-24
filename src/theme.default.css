@@ -30,7 +30,7 @@
 
   /* Typography */
   --font-ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  --font-title: var(--font-ui);
+  --font-title: "MedievalSharp", cursive;
 
   /* Buttons */
   --btn-bg: rgba(255, 255, 255, 0.10);
@@ -79,7 +79,7 @@ body {
 }
 
 .utt-muted {
-  color: var(--fg-muted);
+  color: grey;
 }
 
 /* Buttons (apply class="utt-btn") */
@@ -93,6 +93,7 @@ body {
   box-shadow: var(--shadow-2), var(--inner);
   cursor: pointer;
   transition: transform var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  font-family: var(--font-title);
 }
 
 .utt-btn:hover {
@@ -325,4 +326,9 @@ html, body{
     0 2px 10px rgba(0,0,0,0.25),
     0 1px 0 rgba(255,255,255,0.65);
   font-weight: 900;
+}
+
+.utt-h1 {
+  color: black;
+  text-shadow: none;
 }

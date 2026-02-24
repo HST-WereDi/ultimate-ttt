@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Game } from "../engine/Game.js";
 import type { Move } from "../engine/index.js";
 
-export function UltimateBoard() {
+export function UltimateBoard({ onBack }: { onBack?: () => void }) {
   const [game, setGame] = useState(() => new Game());
   const view = useMemo(() => game.getView(), [game]);
   const [showDebug, setShowDebug] = useState(false);
@@ -65,6 +65,7 @@ export function UltimateBoard() {
     <div className="container">
       <div className="topBar">
         <div className="headerActions">
+          <button onClick={onBack} type="button">Back</button>
           <button
             className="secondary"
             onClick={() => setShowDebug((v) => !v)}
@@ -81,7 +82,7 @@ export function UltimateBoard() {
         {view.status.kind === "playing" && (
           <div className="turnHero">
             <div className={`turnText player-${view.currentPlayer}`}>
-              {view.currentPlayer}<span className='smallTurnText'> to play</span>
+              {view.currentPlayer}<span className='smallTurnText'> makes their move</span>
             </div>
           </div>
         )}

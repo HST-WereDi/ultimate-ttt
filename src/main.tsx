@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { UltimateBoard } from "./ui/UltimateBoard";
+import { App } from "./ui/App";
 import "./index.css";
 import "./theme.default.css"; 
 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <UltimateBoard />
+    <App />
   </React.StrictMode>
 );
