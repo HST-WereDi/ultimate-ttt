@@ -1,6 +1,31 @@
 import type { Bot } from "./types.js";
 import type { Game, Move } from "../index.js";
 
+
+function countOpponentImmediateSmallBoardWins(game: Game): number {
+  const opponentMoves = game.legalMoves();
+  let count = 0;
+
+  for (const move of opponentMoves) {
+    const beforeWinner = game.board
+      .getSmallBoard(move.boardRow, move.boardCol)
+      .getWinner();
+
+    const nextGame = game.applyMove(move);
+
+    const afterWinner = nextGame.board
+      .getSmallBoard(move.boardRow, move.boardCol)
+      .getWinner();
+
+    if (beforeWinner === null && afterWinner === game.currentPlayer) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+
 function countEmptyCellsInBoard(game: Game, boardRow: number, boardCol: number): number {
   let count = 0;
 
@@ -59,14 +84,15 @@ function scoreMove(game: Game, move: Move): number {
     // Hoe minder vrije vakjes daar nog zijn, hoe beter
     score += (9 - emptyCells) * 5;
   }
-
+  const opponentImmediateWins = countOpponentImmediateSmallBoardWins(nextGame);
+  score -= opponentImmediateWins * 2000;
   return score;
 }
 
-export const CaptainObvious: Bot = {
-  id: "captain-obvious",
-  name: "Captain Obvious",
-  description: "Only looks as far as his nose is long.",
+export class CaptainObvious implements Bot {
+  id = "captain-obvious" as const;
+  name = "Captain Obvious";
+  description = "Charges into battle with confidence, common sense, and just enough strategy to be dangerous.";
 
   chooseMove(game: Game): Move {
     const moves = game.legalMoves();
@@ -101,5 +127,5 @@ export const CaptainObvious: Bot = {
     }
 
     return chosenMove;
-  },
-};
+  }
+}
