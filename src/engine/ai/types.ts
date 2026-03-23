@@ -1,7 +1,7 @@
 import type { Move } from "../index.js";
 import type { Game } from "../Game.js";
 
-export type BotId = "billy-random";
+export type BotId = "billy-random" | "captain-obvious";
 
 export interface Bot {
   id: BotId;
