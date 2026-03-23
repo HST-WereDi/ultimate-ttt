@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { BoardView } from "./BoardView";
 import type { Move } from "../engine/index.js";
 import type { GameView } from "../engine/Game.js";
@@ -41,13 +41,36 @@ export function GameScreen(props: {
 
   const isOver = view.status.kind !== "playing";
 
+    const topBarRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+    const el = topBarRef.current;
+    if (!el) return;
+
+    const apply = () => {
+        const h = Math.ceil(el.getBoundingClientRect().height);
+        document.documentElement.style.setProperty("--topbar-h", `${h}px`);
+    };
+
+    apply();
+
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+
+    window.addEventListener("resize", apply);
+    return () => {
+        ro.disconnect();
+        window.removeEventListener("resize", apply);
+    };
+    }, []);
+
   return (
     <div className="container">
  {/* =========================
     TOP BAR
 ========================= */}
 
-        <div className="topBar">
+        <div className="topBar" ref={topBarRef}>
         {/* Knoppen links */}
         <div className="headerActions">
             {onBack && (

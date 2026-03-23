@@ -1,0 +1,505 @@
+:root {
+  --page-pad: 12px;
+
+  --gap-macro: clamp(6px, 1.2vh, 12px);
+  --gap-micro: clamp(3px, 0.8vh, 6px);
+
+  --micro-border: 3px;
+  --pad-board: clamp(4px, 0.9vh, 10px);
+
+  --player-x: #2563eb;
+  --player-o: #dc2626;
+
+  --topbar-h: 180px; /* fallback, wordt door JS overschreven */
+
+  /* ✅ nu zijn gap/pad bekend en kan macro-w goed berekenen */
+  --macro-w: calc(100vw - (var(--page-pad) * 2) - (var(--gap-macro) * 2));
+  --macro-h: calc(100svh - (var(--page-pad) * 2) - var(--topbar-h) - 12px);
+
+  --board: clamp(
+    96px,
+    min(calc(var(--macro-w) / 3), calc(var(--macro-h) / 3)),
+    220px
+  );
+
+  --cell-raw: calc(
+    (
+      var(--board)
+      - (var(--micro-border) * 2)
+      - (var(--pad-board) * 2)
+      - (var(--gap-micro) * 2)
+    ) / 3
+  );
+
+  --cell: min(54px, var(--cell-raw));
+}
+body {
+  margin: 0;
+  padding: var(--page-pad);
+  font-family: 'MedievalSharp', cursive;
+  overflow-x: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2vh, 20px);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub {
+  font-size: 14px;
+  color: #666;
+}
+
+button {
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.macro-board {
+  display: grid;
+  grid-template-columns: repeat(3, var(--board));
+  gap: var(--gap-macro);
+
+  /* centering */
+  margin: 0 auto;
+
+  /* nooit breder dan viewport */
+  max-width: calc(100vw - (var(--page-pad) * 2));
+  box-sizing: border-box;
+  transform: translateZ(0);
+  width: fit-content;
+}
+
+.micro-board {
+  width: var(--board);
+  aspect-ratio: 1 / 1;
+  border: var(--micro-border) solid black;
+  padding: var(--pad-board);
+  background: white;
+  position: relative;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.micro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell));
+  grid-template-rows: repeat(3, var(--cell));
+  gap: var(--gap-micro);
+}
+
+.cell {
+  width: var(--cell);
+  height: var(--cell);
+  font-size: clamp(16px, calc(var(--cell) * 0.45), 28px);
+  font-weight: bold;
+  border: 1px solid #999;
+  background: white;
+  cursor: pointer;
+  box-sizing: border-box;
+  font-family: 'MedievalSharp', cursive;
+}
+
+/* Als jouw JSX className="cell X" gebruikt */
+.cell.X {
+  color: var(--player-x);
+}
+
+.cell.O {
+  color: var(--player-o);
+}
+
+.cell:hover:enabled {
+  background: #eee;
+}
+
+.active {
+  outline: 2px solid black;
+  outline-offset: 0px;
+}
+
+.dimmed {
+  opacity: 0.4;
+}
+
+.winner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 64px;
+  font-weight: bold;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: white;
+  border: 2px solid black;
+  border-radius: 14px;
+  padding: 18px 20px;
+  width: min(360px, 90vw);
+  box-sizing: border-box;
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
+
+.modalTitle {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.modalBtn {
+  padding: 10px 12px;
+  border: 1px solid #999;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+}
+
+.modalBtn:hover {
+  background: #f2f2f2;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modalBtn.secondary {
+  background: #f7f7f7;
+}
+
+
+.headerActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+button.secondary {
+  background: #f7f7f7;
+}
+
+.debugPanel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.debugRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.debugHint {
+  font-size: 12px;
+  color: #666;
+}
+
+/* =========================
+   TOP BAR LAYOUT
+========================= */
+
+.topBar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: clamp(10px, 2vh, 20px);
+}
+
+/* knoppen links */
+.headerActions {
+  position: absolute;
+  left: 0;
+  display: flex;
+  gap: 10px;
+}
+
+/* HERO TURN DISPLAY */
+
+.turnHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: clamp(10px, 2.2vh, 16px) clamp(14px, 4vw, 50px);
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.turnText {
+  font-size: 40px;
+  letter-spacing: 2px;
+}
+
+/* AAN ZET tekst */
+.turnLabel {
+  font-size: clamp(10px, 1.6vh, 13px);
+  letter-spacing: clamp(2px, 0.6vw, 4px);
+  font-weight: 700;
+  color: #000; /* nu zwart */
+}
+
+/* Grote hero X of O */
+.turnPlayer {
+  font-size: clamp(40px, 7vw, 64px);
+  font-weight: 800;
+  line-height: 1;
+  margin-top: 6px;
+
+  /* zwaard-effect */
+  text-shadow:
+    0 2px 0 #fff,
+    0 4px 6px rgba(0, 0, 0, 0.3);
+
+  transform: skew(-4deg);
+}
+
+.player-X {
+  color: var(--player-x);
+}
+
+.player-O {
+  color: var(--player-o);
+}
+
+.winner-overlay.X {
+  color: var(--player-x);
+}
+
+.winner-overlay.O {
+  color: var(--player-o);
+}
+
+.smallTurnText {
+  font-size: clamp(16px, 3.5vw, 25px);
+  text-align: center;
+  color: black;
+}
+
+
+/* ---- Landing layout ---- */
+.utt-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px 16px;
+  box-sizing: border-box;
+}
+
+.utt-card {
+  width: min(560px, 92vw);
+  padding: 26px;
+  display: grid;
+  gap: 18px;
+}
+
+.utt-brand {
+  display: grid;
+  gap: 8px;
+  text-align: center;
+}
+
+.utt-kicker {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.utt-h1 {
+  font-size: clamp(32px, 4vw, 48px);
+  margin: 0;
+}
+
+.utt-menu {
+  display: grid;
+  gap: 12px;
+}
+
+.utt-btn--big {
+  width: 100%;
+  padding: 14px 18px;
+  font-weight: 800;
+}
+
+.utt-footnote {
+  text-align: center;
+  font-size: 13px;
+}
+
+
+/* ---- Rules page ---- */
+
+.utt-rules section {
+  display: grid;
+  gap: 6px;
+}
+
+.utt-rules h2 {
+  margin: 10px 0 0;
+  font-size: 18px;
+  color: black;
+}
+
+.utt-rules p {
+  margin: 0;
+  line-height: 1.5;
+  color: rgb(30, 30, 30);
+}
+
+.utt-rules-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Landing button faction colors */
+.utt-menu .utt-btn {
+  color: BLACK;
+}
+
+.utt-panel {
+  color: gray;
+}
+
+/* Zorg dat disabled cellen hun kleur behouden */
+.cell:disabled {
+  opacity: 1;              /* haal de grijze fade weg */
+  color: inherit;          /* laat onze mark-kleur winnen */
+  -webkit-text-fill-color: currentColor; /* safari/chrome fix */
+}
+
+.cell.utt-mark-x,
+.cell.utt-mark-x:disabled {
+  color: var(--player-x);
+  text-shadow: 0 0 22px rgba(255, 106, 106, 0.25);
+}
+
+.cell.utt-mark-o,
+.cell.utt-mark-o:disabled {
+color: var(--player-o);
+  text-shadow: 0 0 22px rgba(106, 255, 179, 0.22);
+}
+
+/* Winner overlay faction colors */
+.winner-overlay.utt-mark-x {
+  color: var(--player-x);
+  text-shadow: 0 0 26px rgba(255, 77, 77, 0.35);
+}
+
+.winner-overlay.utt-mark-o {
+  color: var(--player-o);
+  text-shadow: 0 0 26px rgba(106, 255, 179, 0.35);
+}
+
+.utt-heroTurn {
+  font-size: clamp(22px, 3.2vw, 34px);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.utt-heroTurnCentered {
+  text-align: center;
+  font-size: clamp(24px, 3.5vw, 38px);
+  font-weight: 900;
+  margin: 10px 0 18px 0;
+}
+
+@media (max-width: 520px) {
+  body {
+    padding: 8px;
+  }
+
+  .topBar {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .headerActions {
+    position: static;   /* haalt 'm uit absolute */
+    justify-content: center;
+  }
+
+  .turnHero {
+    width: 100%;
+    padding: 12px 14px;
+  }
+
+  .turnPlayer {
+    font-size: 52px;
+  }
+
+  .smallTurnText {
+    font-size: 20px;
+    text-align: center;
+  }
+}
+
+@media (pointer: coarse) {
+  button {
+    padding: 10px 14px;
+  }
+
+  .cell {
+    font-size: clamp(18px, calc(var(--cell) * 0.55), 30px);
+  }
+
+  .cell:hover:enabled {
+    background: white; /* hover uit op touch */
+  }
+}
+
+.micro-board {
+  box-sizing: border-box;
+}
+
+@media (max-width: 380px) {
+  :root { --page-pad: 8px; }
+}
+
+@media (max-height: 700px) {
+  :root { --hud-h: 140px; }
+}
+
+@media (max-height: 620px) {
+  :root { --hud-h: 120px; }
+}
+
+@media (max-height: 560px) {
+  :root { --hud-h: 105px; }
+}

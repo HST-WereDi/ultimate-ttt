@@ -9,8 +9,8 @@ export function Landing(props: {
     <div className="utt-shell">
       <div className="utt-panel utt-card">
         <div className="utt-brand">
-          <div className="utt-kicker">Arena of Petty Glory</div>
-          <h1 className="utt-title utt-h1">ULTIMATE TIC TAC TOE</h1>
+          <div className="utt-kicker">WELCOME TO</div>
+          <h1 className="utt-title utt-h1">SUPER ULTIMATE BUTTER, CHEESE & EGGS</h1>
           <p className="utt-muted">
             Choose thy path, challenger.
           </p>

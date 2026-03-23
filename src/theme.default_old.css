@@ -1,0 +1,334 @@
+/* =========================
+   UTT Theme: Arena of Petty Glory (default)
+   ========================= */
+
+:root {
+  /* Core */
+  --bg-0: #070916;
+  --bg-1: #0b0f24;
+  --panel: rgba(255, 255, 255, 0.06);
+  --panel-strong: rgba(255, 255, 255, 0.10);
+
+  --fg: rgba(255, 255, 255, 0.92);
+  --fg-muted: rgba(255, 255, 255, 0.70);
+  --fg-dim: rgba(255, 255, 255, 0.55);
+
+  /* Accents */
+  --accent: #8b5cf6;     /* electric purple */
+  --accent-2: #22d3ee;   /* cyan glow */
+  --gold: #facc15;
+
+  /* Board sizing */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --gap: 10px;
+
+  /* Shadows */
+  --shadow-1: 0 10px 35px rgba(0, 0, 0, 0.45);
+  --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --inner: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+
+  /* Typography */
+  --font-ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  --font-title: "MedievalSharp", cursive;
+
+  /* Buttons */
+  --btn-bg: rgba(255, 255, 255, 0.10);
+  --btn-bg-hover: rgba(255, 255, 255, 0.14);
+  --btn-border: rgba(255, 255, 255, 0.18);
+
+  /* Motion */
+  --t-fast: 120ms;
+  --t-med: 220ms;
+}
+
+/* App backdrop */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+
+body {
+  margin: 0;
+  color: var(--fg);
+  font-family: 'MedievalSharp', cursive;
+  background:
+    radial-gradient(900px 600px at 20% 10%, rgba(139, 92, 246, 0.20), transparent 60%),
+    radial-gradient(800px 500px at 80% 20%, rgba(34, 211, 238, 0.14), transparent 65%),
+    radial-gradient(900px 700px at 50% 90%, rgba(250, 204, 21, 0.10), transparent 65%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-0));
+}
+
+/* A generic "panel" look you can reuse */
+.utt-panel {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  backdrop-filter: blur(10px);
+}
+
+/* Titles / text helpers */
+.utt-title {
+  font-family: var(--font-title);
+  letter-spacing: 0.5px;
+  font-weight: 800;
+}
+
+.utt-muted {
+  color: rgb(50,50,50);
+}
+
+/* Buttons (apply class="utt-btn") */
+.utt-btn {
+  appearance: none;
+  border: 1px solid var(--btn-border);
+  background: linear-gradient(180deg, var(--btn-bg), rgba(255, 255, 255, 0.06));
+  color: grey;
+  border-radius: 999px;
+  padding: 10px 16px;
+  box-shadow: var(--shadow-2), var(--inner);
+  cursor: pointer;
+  transition: transform var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  font-family: var(--font-title);
+}
+
+.utt-btn:hover {
+  background: linear-gradient(180deg, var(--btn-bg-hover), rgba(255, 255, 255, 0.07));
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.utt-btn:active {
+  transform: translateY(0px) scale(0.99);
+}
+
+/* Input (room code later) */
+.utt-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.25);
+  color: var(--fg);
+  outline: none;
+  box-shadow: var(--inner);
+}
+
+.utt-input:focus {
+  border-color: rgba(139, 92, 246, 0.55);
+}
+
+/* Board look (works even if your UI uses generic divs) */
+.utt-board,
+.utt-smallboard {
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: var(--shadow-2), var(--inner);
+}
+
+/* Cells */
+.utt-cell {
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: var(--inner);
+  transition: transform var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+}
+
+.utt-cell:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: scale(1.01);
+}
+
+/* Optional state hooks if you add these classes later */
+.utt-cell--playable {
+  outline: 2px solid rgba(34, 211, 238, 0.35);
+}
+
+.utt-cell--locked {
+  opacity: 0.55;
+  filter: saturate(0.85);
+}
+
+/* Mark styling (if X/O are text) */
+.utt-mark-x {
+  color: #ff6a6a;
+  text-shadow: 0 0 22px rgba(255, 106, 106, 0.25);
+}
+.utt-mark-o {
+  color: #6affb3;
+  text-shadow: 0 0 22px rgba(106, 255, 179, 0.22);
+}
+
+
+:root{
+  /* Board materials */
+  --board-outer: rgba(255,255,255,0.10);
+  --board-edge: rgba(255,255,255,0.16);
+  --board-core: rgba(10,12,24,0.55);
+
+  /* Cell materials */
+  --cell-core: rgba(255,255,255,0.07);
+  --cell-core-hover: rgba(255,255,255,0.10);
+  --cell-edge: rgba(255,255,255,0.14);
+
+  /* Glows */
+  --glow-accent: 0 0 0 1px rgba(139, 92, 246, 0.22), 0 0 22px rgba(139, 92, 246, 0.22);
+  --glow-cyan:   0 0 0 1px rgba(34, 211, 238, 0.18), 0 0 22px rgba(34, 211, 238, 0.18);
+
+  /* “Candy crush” polish: bevel + highlight */
+  --bevel-hi: inset 0 1px 0 rgba(255,255,255,0.14);
+  --bevel-lo: inset 0 -2px 6px rgba(0,0,0,0.35);
+
+  /* Grain / scratches (no images) */
+  --noise-a: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,0.035) 0px,
+    rgba(255,255,255,0.035) 1px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0) 6px
+  );
+}
+
+
+body{
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.20),
+      rgba(255,255,255,0.05)
+    ),
+    url("/bg.webp");
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+
+.container{
+  position: relative;
+  z-index: 1;
+
+  padding: clamp(20px, 4vw, 48px);
+}
+
+.macro-board{
+  /* voorkom dat het opeens paginabreed wordt */
+  width: fit-content;
+  max-width: min(92vw, 980px);
+  margin: 0 auto;
+
+  /* geen mega padding */
+  padding: 14px;
+  border-radius: 22px;
+
+  /* veel transparanter */
+  background:
+    radial-gradient(520px 320px at 50% 0%, rgba(255,255,255,0.22), transparent 70%),
+    linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+
+  border: 1px solid rgba(255,255,255,0.40);
+  box-shadow:
+    0 22px 70px rgba(0,0,0,0.18),
+    0 6px 18px rgba(0,0,0,0.10);
+
+  backdrop-filter: blur(10px);
+}
+
+html, body{
+  height: 100%;
+  margin: 0;          /* override index.css */
+  overflow: hidden;   /* voorkomt verticale scroll */
+}
+
+.container{
+  min-height: 100vh;
+  justify-content: flex-start;   /* start bovenaan */
+  padding-top: 24px;             /* gecontroleerde ruimte */
+  padding-bottom: 24px;
+}
+
+
+.cell{
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,0.65);
+
+  background:
+    radial-gradient(60px 40px at 30% 20%, rgba(255,255,255,0.85), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0.18)),
+    rgba(255,255,255,0.25);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 8px 18px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -4px 10px rgba(0,0,0,0.08);
+
+  color: #1f2430;
+
+  transition: transform 120ms ease, filter 120ms ease, box-shadow 120ms ease;
+}
+
+.cell:hover:enabled{
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+
+  box-shadow:
+    0 12px 28px rgba(0,0,0,0.18),
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -6px 14px rgba(0,0,0,0.08);
+}
+
+.winner-overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  border-radius: inherit;
+
+  display: grid;
+  place-items: center;
+
+  /* semi-transparante glaslaag */
+  background:
+    radial-gradient(
+      220px 160px at 50% 35%,
+      rgba(255,255,255,0.45),
+      rgba(255,255,255,0.15) 70%
+    ),
+    rgba(255,255,255,0.20);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  /* teken volledig solid */
+  color: #111827;
+  font-weight: 900;
+  font-size: 64px;
+  text-shadow:
+    0 6px 20px rgba(0,0,0,0.25),
+    0 1px 0 rgba(255,255,255,0.6);
+}
+
+.modalTitle{
+  color: #0f172a; /* donker, altijd leesbaar */
+  text-shadow:
+    0 2px 10px rgba(0,0,0,0.25),
+    0 1px 0 rgba(255,255,255,0.65);
+  font-weight: 900;
+}
+
+.utt-h1 {
+  color: black;
+  text-shadow: none;
+}

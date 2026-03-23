@@ -1,63 +1,189 @@
+/* =========================
+   UTT — Arena of Petty Glory
+   Eén bestand. Alleen regels die daadwerkelijk gebruikt worden.
+========================= */
+
+/* ---- Tokens ---- */
 :root {
-  /* micro-board grootte op basis van schermhoogte */
-  --board: clamp(140px, 22vh, 200px);
+  /* Spelers */
+  --player-x: #2563eb;
+  --player-o: #dc2626;
 
-  /* cel grootte volgt board: (board - padding*2 - gaps*2) / 3 */
-  /* we kiezen vaste padding/gap en laten cell dmv clamp meeschalen */
-  --cell: clamp(34px, calc(var(--board) / 4), 54px);
-
+  /* Spacing */
+  --page-pad: 12px;
   --gap-macro: clamp(6px, 1.2vh, 12px);
   --gap-micro: clamp(3px, 0.8vh, 6px);
+  --micro-border: 3px;
   --pad-board: clamp(4px, 0.9vh, 10px);
-  --player-x: #2563eb; /* blauw */
-  --player-o: #dc2626; /* rood */
+
+  /* Topbar hoogte — wordt door JS overschreven via setProperty */
+  --topbar-h: 180px;
+
+  /* Board sizing */
+  --macro-w: calc(100vw - (var(--page-pad) * 2) - (var(--gap-macro) * 2));
+  --macro-h: calc(100svh - (var(--page-pad) * 2) - var(--topbar-h) - 12px);
+
+  --board: clamp(
+    96px,
+    min(calc(var(--macro-w) / 3), calc(var(--macro-h) / 3)),
+    220px
+  );
+
+  --cell-raw: calc(
+    (
+      var(--board)
+      - (var(--micro-border) * 2)
+      - (var(--pad-board) * 2)
+      - (var(--gap-micro) * 2)
+    ) / 3
+  );
+  --cell: min(54px, var(--cell-raw));
+
+  /* Thema kleuren */
+  --fg: rgba(255, 255, 255, 0.92);
+  --fg-muted: rgba(255, 255, 255, 0.70);
+  --panel: rgba(255, 255, 255, 0.06);
+  --radius: 18px;
+  --shadow-1: 0 10px 35px rgba(0, 0, 0, 0.45);
+  --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --inner: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  --btn-bg: rgba(255, 255, 255, 0.10);
+  --btn-bg-hover: rgba(255, 255, 255, 0.14);
+  --btn-border: rgba(255, 255, 255, 0.18);
+  --t-fast: 120ms;
+}
+
+/* ---- Reset & base ---- */
+html {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
 }
 
 body {
-  margin: 20px;
+  height: 100%;
+  margin: 0;
+  padding: var(--page-pad);
+  box-sizing: border-box;
   font-family: 'MedievalSharp', cursive;
+  color: var(--fg);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.05)),
+    url("/bg.webp");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
+/* ---- App container ---- */
 .container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(10px, 2vh, 20px);
+  position: relative;
+  z-index: 1;
+  padding: clamp(10px, 2vw, 24px);
+  box-sizing: border-box;
 }
 
-.header {
+/* ---- Top bar ---- */
+.topBar {
+  position: relative;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
-.sub {
-  font-size: 14px;
-  color: #666;
+.headerActions {
+  position: absolute;
+  left: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-button {
+.headerActions button {
+  background: white;
+  color: #1f2430;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   padding: 6px 12px;
   cursor: pointer;
+  font-family: 'MedievalSharp', cursive;
 }
 
+.headerActions button:hover {
+  background: #f2f2f2;
+}
+
+/* ---- Turn hero ---- */
+.turnHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 2.2vh, 16px) clamp(14px, 4vw, 50px);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.turnPlayer {
+  font-size: clamp(40px, 7vw, 64px);
+  font-weight: 800;
+  line-height: 1;
+  margin-top: 6px;
+  text-shadow: 0 2px 0 #fff, 0 4px 6px rgba(0, 0, 0, 0.3);
+  transform: skew(-4deg);
+}
+
+.player-X { color: var(--player-x); }
+.player-O { color: var(--player-o); }
+
+.turnText {
+  font-size: 40px;
+  letter-spacing: 2px;
+}
+
+.smallTurnText {
+  font-size: clamp(16px, 3.5vw, 25px);
+  text-align: center;
+  color: white;
+}
+
+/* ---- Macro board ---- */
 .macro-board {
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(3, var(--board));
   gap: var(--gap-macro);
-  justify-content: center;
+  margin: 0 auto;
+  width: fit-content;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 22px;
+  background:
+    radial-gradient(520px 320px at 50% 0%, rgba(255, 255, 255, 0.22), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.40);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.18), 0 6px 18px rgba(0, 0, 0, 0.10);
+  backdrop-filter: blur(10px);
+  transform: translateZ(0);
 }
 
+/* ---- Micro board ---- */
 .micro-board {
   width: var(--board);
-  height: var(--board);
-  border: 3px solid black;
+  aspect-ratio: 1 / 1;
+  border: var(--micro-border) solid rgba(255, 255, 255, 0.35);
   padding: var(--pad-board);
-  background: white;
   position: relative;
-
   display: grid;
   place-items: center;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .micro-grid {
@@ -67,50 +193,97 @@ button {
   gap: var(--gap-micro);
 }
 
+/* ---- Cell ---- */
 .cell {
   width: var(--cell);
   height: var(--cell);
   font-size: clamp(16px, calc(var(--cell) * 0.45), 28px);
   font-weight: bold;
-  border: 1px solid #999;
-  background: white;
+  font-family: 'MedievalSharp', cursive;
   cursor: pointer;
   box-sizing: border-box;
-  font-family: 'MedievalSharp', cursive;
-}
-
-/* Als jouw JSX className="cell X" gebruikt */
-.cell.X {
-  color: var(--player-x);
-}
-
-.cell.O {
-  color: var(--player-o);
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  background:
+    radial-gradient(60px 40px at 30% 20%, rgba(255, 255, 255, 0.85), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.18)),
+    rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -4px 10px rgba(0, 0, 0, 0.08);
+  color: #1f2430;
+  transition: transform var(--t-fast) ease, filter var(--t-fast) ease, box-shadow var(--t-fast) ease;
 }
 
 .cell:hover:enabled {
-  background: #eee;
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -6px 14px rgba(0, 0, 0, 0.08);
 }
 
+.cell:disabled {
+  opacity: 1;
+  color: inherit;
+  -webkit-text-fill-color: currentColor;
+}
+
+.cell.utt-mark-x,
+.cell.utt-mark-x:disabled {
+  color: var(--player-x);
+  text-shadow: 0 0 22px rgba(37, 99, 235, 0.3);
+}
+
+.cell.utt-mark-o,
+.cell.utt-mark-o:disabled {
+  color: var(--player-o);
+  text-shadow: 0 0 22px rgba(220, 38, 38, 0.3);
+}
+
+/* ---- Board states ---- */
 .active {
-  border: 5px solid black;
+  outline: 2px solid white;
+  outline-offset: 0;
 }
 
 .dimmed {
   opacity: 0.4;
 }
 
+/* ---- Winner overlay ---- */
 .winner-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  z-index: 10;
+  border-radius: inherit;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(220px 160px at 50% 35%, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15) 70%),
+    rgba(255, 255, 255, 0.20);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-weight: 900;
   font-size: 64px;
-  font-weight: bold;
+  text-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
+.winner-overlay.utt-mark-x {
+  color: var(--player-x);
+  text-shadow: 0 0 26px rgba(37, 99, 235, 0.45);
+}
+
+.winner-overlay.utt-mark-o {
+  color: var(--player-o);
+  text-shadow: 0 0 26px rgba(220, 38, 38, 0.45);
+}
+
+/* ---- Modal ---- */
 .overlay {
   position: fixed;
   inset: 0;
@@ -121,8 +294,8 @@ button {
 }
 
 .modal {
-  background: white;
-  border: 2px solid black;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 14px;
   padding: 18px 20px;
   width: min(360px, 90vw);
@@ -130,23 +303,15 @@ button {
   display: grid;
   gap: 14px;
   text-align: center;
+  box-shadow: var(--shadow-1);
+  backdrop-filter: blur(20px);
 }
 
 .modalTitle {
   font-size: 22px;
-  font-weight: 700;
-}
-
-.modalBtn {
-  padding: 10px 12px;
-  border: 1px solid #999;
-  border-radius: 12px;
-  background: white;
-  cursor: pointer;
-}
-
-.modalBtn:hover {
-  background: #f2f2f2;
+  font-weight: 900;
+  color: #0f172a;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .modalActions {
@@ -155,137 +320,39 @@ button {
   justify-content: center;
 }
 
+.modalBtn {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background: white;
+  color: #1f2430;
+  cursor: pointer;
+  font-family: 'MedievalSharp', cursive;
+}
+
+.modalBtn:hover {
+  background: #f2f2f2;
+}
+
 .modalBtn.secondary {
   background: #f7f7f7;
 }
 
-
-.headerActions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-button.secondary {
-  background: #f7f7f7;
-}
-
-.debugPanel {
-  display: grid;
-  gap: 10px;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-}
-
-.debugRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.debugHint {
-  font-size: 12px;
-  color: #666;
-}
-
-/* =========================
-   TOP BAR LAYOUT
-========================= */
-
-.topBar {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-/* knoppen links */
-.headerActions {
-  position: absolute;
-  left: 0;
-  display: flex;
-  gap: 10px;
-}
-
-/* HERO TURN DISPLAY */
-
-.turnHero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  padding: 16px 50px;
-  border-radius: 16px;
-
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-.turnText {
-  font-size: 40px;
-  letter-spacing: 2px;
-}
-
-/* AAN ZET tekst */
-.turnLabel {
-  font-size: 13px;
-  letter-spacing: 4px;
-  font-weight: 700;
-  color: #000; /* nu zwart */
-}
-
-/* Grote hero X of O */
-.turnPlayer {
-  font-size: 64px;
-  font-weight: 800;
-  line-height: 1;
-  margin-top: 6px;
-
-  /* zwaard-effect */
-  text-shadow:
-    0 2px 0 #fff,
-    0 4px 6px rgba(0, 0, 0, 0.3);
-
-  transform: skew(-4deg);
-}
-
-.player-X {
-  color: var(--player-x);
-}
-
-.player-O {
-  color: var(--player-o);
-}
-
-.winner-overlay.X {
-  color: var(--player-x);
-}
-
-.winner-overlay.O {
-  color: var(--player-o);
-}
-
-.smallTurnText {
-  font-size: 25px;
-  color: black;
-}
-
-
-/* ---- Landing layout ---- */
+/* ---- Landing & Rules ---- */
 .utt-shell {
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 28px 16px;
   box-sizing: border-box;
+}
+
+.utt-panel {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  backdrop-filter: blur(10px);
 }
 
 .utt-card {
@@ -306,16 +373,51 @@ button.secondary {
   text-transform: uppercase;
   font-size: 12px;
   opacity: 0.85;
+  color: var(--fg-muted);
+}
+
+.utt-title {
+  font-family: 'MedievalSharp', cursive;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
 .utt-h1 {
   font-size: clamp(32px, 4vw, 48px);
   margin: 0;
+  color: black;
+}
+
+.utt-muted {
+  color: rgb(50, 50, 50);
 }
 
 .utt-menu {
   display: grid;
   gap: 12px;
+}
+
+.utt-btn {
+  appearance: none;
+  border: 1px solid var(--btn-border);
+  background: linear-gradient(180deg, var(--btn-bg), rgba(255, 255, 255, 0.06));
+  color: black;
+  border-radius: 999px;
+  padding: 10px 16px;
+  box-shadow: var(--shadow-2), var(--inner);
+  cursor: pointer;
+  transition: transform var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  font-family: 'MedievalSharp', cursive;
+}
+
+.utt-btn:hover {
+  background: linear-gradient(180deg, var(--btn-bg-hover), rgba(255, 255, 255, 0.07));
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+.utt-btn:active {
+  transform: translateY(0) scale(0.99);
 }
 
 .utt-btn--big {
@@ -327,10 +429,8 @@ button.secondary {
 .utt-footnote {
   text-align: center;
   font-size: 13px;
+  color: var(--fg-muted);
 }
-
-
-/* ---- Rules page ---- */
 
 .utt-rules section {
   display: grid;
@@ -340,13 +440,13 @@ button.secondary {
 .utt-rules h2 {
   margin: 10px 0 0;
   font-size: 18px;
-  color: black;
+  color: white;
 }
 
 .utt-rules p {
   margin: 0;
   line-height: 1.5;
-  color: rgb(30, 30, 30);
+  color: var(--fg-muted);
 }
 
 .utt-rules-actions {
@@ -355,54 +455,55 @@ button.secondary {
   justify-content: center;
 }
 
-/* Landing button faction colors */
-.utt-menu .utt-btn {
-  color: BLACK;
+/* ---- Responsive ---- */
+@media (max-width: 520px) {
+  body {
+    padding: 8px;
+  }
+
+  .topBar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .headerActions {
+    position: static;
+    justify-content: center;
+  }
+
+  .turnHero {
+    width: 100%;
+    padding: 12px 14px;
+  }
+
+  .turnPlayer {
+    font-size: 52px;
+  }
+
+  .smallTurnText {
+    font-size: 20px;
+  }
 }
 
-.utt-panel {
-  color: gray;
+@media (max-width: 380px) {
+  :root { --page-pad: 8px; }
 }
 
-/* Zorg dat disabled cellen hun kleur behouden */
-.cell:disabled {
-  opacity: 1;              /* haal de grijze fade weg */
-  color: inherit;          /* laat onze mark-kleur winnen */
-  -webkit-text-fill-color: currentColor; /* safari/chrome fix */
-}
+@media (pointer: coarse) {
+  .headerActions button {
+    padding: 10px 14px;
+  }
 
-.cell.utt-mark-x,
-.cell.utt-mark-x:disabled {
-  color: var(--player-x);
-  text-shadow: 0 0 22px rgba(255, 106, 106, 0.25);
-}
+  .cell {
+    font-size: clamp(18px, calc(var(--cell) * 0.55), 30px);
+  }
 
-.cell.utt-mark-o,
-.cell.utt-mark-o:disabled {
-color: var(--player-o);
-  text-shadow: 0 0 22px rgba(106, 255, 179, 0.22);
-}
-
-/* Winner overlay faction colors */
-.winner-overlay.utt-mark-x {
-  color: var(--player-x);
-  text-shadow: 0 0 26px rgba(255, 77, 77, 0.35);
-}
-
-.winner-overlay.utt-mark-o {
-  color: var(--player-o);
-  text-shadow: 0 0 26px rgba(106, 255, 179, 0.35);
-}
-
-.utt-heroTurn {
-  font-size: clamp(22px, 3.2vw, 34px);
-  font-weight: 900;
-  letter-spacing: 0.5px;
-}
-
-.utt-heroTurnCentered {
-  text-align: center;
-  font-size: clamp(24px, 3.5vw, 38px);
-  font-weight: 900;
-  margin: 10px 0 18px 0;
+  .cell:hover:enabled {
+    transform: none;
+    filter: none;
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -4px 10px rgba(0, 0, 0, 0.08);
+  }
 }

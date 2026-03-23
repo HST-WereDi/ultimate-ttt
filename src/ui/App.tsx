@@ -39,7 +39,7 @@ export function App() {
   return (
     <Landing
       onLocal={() => setScreen("local")}
-        onAI={() => setScreen("ai_select")}
+      onAI={() => setScreen("ai_select")}
       onRules={() => setScreen("rules")}
     />
   );
