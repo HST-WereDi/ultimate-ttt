@@ -103,14 +103,6 @@ export class Game {
         throw new Error("Illegal move: game is already over");
     }
 
-    const isLegal = this.board.legalMoves().some(
-        (m) =>
-        m.boardRow === move.boardRow &&
-        m.boardCol === move.boardCol &&
-        m.cellRow === move.cellRow &&
-        m.cellCol === move.cellCol
-    );
-
     if (!this.isMoveLegal(move)) {
     throw new Error("Illegal move: not legal");
     }

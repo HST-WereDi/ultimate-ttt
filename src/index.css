@@ -11,6 +11,9 @@
 
   /* Spacing */
   --page-pad: 12px;
+  --container-pad: clamp(10px, 2vw, 24px);
+  --container-gap: clamp(10px, 2vh, 20px);
+  --macro-pad: 14px;
   --gap-macro: clamp(6px, 1.2vh, 12px);
   --gap-micro: clamp(3px, 0.8vh, 6px);
   --micro-border: 3px;
@@ -19,12 +22,25 @@
   /* Topbar hoogte — wordt door JS overschreven via setProperty */
   --topbar-h: 180px;
 
-  /* Board sizing */
-  --macro-w: calc(100vw - (var(--page-pad) * 2) - (var(--gap-macro) * 2));
-  --macro-h: calc(100svh - (var(--page-pad) * 2) - var(--topbar-h) - 12px);
+  /* Board sizing — alle lagen padding worden afgetrokken zodat het grid nooit overloopt */
+  --macro-w: calc(
+    100vw
+    - (var(--page-pad) * 2)
+    - (var(--container-pad) * 2)
+    - (var(--macro-pad) * 2)
+    - (var(--gap-macro) * 2)
+  );
+  --macro-h: calc(
+    100svh
+    - (var(--page-pad) * 2)
+    - (var(--container-pad) * 2)
+    - var(--container-gap)
+    - var(--topbar-h)
+    - 4px
+  );
 
   --board: clamp(
-    96px,
+    80px,
     min(calc(var(--macro-w) / 3), calc(var(--macro-h) / 3)),
     220px
   );
@@ -54,20 +70,17 @@
 }
 
 /* ---- Reset & base ---- */
-html {
+html, body, #root {
   height: 100%;
   margin: 0;
   overflow: hidden;
 }
 
 body {
-  height: 100%;
-  margin: 0;
   padding: var(--page-pad);
   box-sizing: border-box;
   font-family: 'MedievalSharp', cursive;
   color: var(--fg);
-  overflow: hidden;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.05)),
     url("/bg.webp");
@@ -80,11 +93,20 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 2vh, 20px);
+  gap: var(--container-gap);
   position: relative;
   z-index: 1;
-  padding: clamp(10px, 2vw, 24px);
+  padding: var(--container-pad);
   box-sizing: border-box;
+  height: 100%;
+}
+
+.board-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
 }
 
 /* ---- Top bar ---- */
@@ -162,7 +184,7 @@ body {
   margin: 0 auto;
   width: fit-content;
   box-sizing: border-box;
-  padding: 14px;
+  padding: var(--macro-pad);
   border-radius: 22px;
   background:
     radial-gradient(520px 320px at 50% 0%, rgba(255, 255, 255, 0.22), transparent 70%),
@@ -340,11 +362,12 @@ body {
 
 /* ---- Landing & Rules ---- */
 .utt-shell {
-  min-height: 100vh;
+  height: 100%;
   display: grid;
   place-items: center;
   padding: 28px 16px;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .utt-panel {
@@ -356,7 +379,7 @@ body {
 }
 
 .utt-card {
-  width: min(560px, 92vw);
+  width: min(560px, 100%);
   padding: 26px;
   display: grid;
   gap: 18px;
@@ -486,7 +509,11 @@ body {
 }
 
 @media (max-width: 380px) {
-  :root { --page-pad: 8px; }
+  :root {
+    --page-pad: 8px;
+    --macro-pad: 8px;
+    --container-pad: 8px;
+  }
 }
 
 @media (pointer: coarse) {

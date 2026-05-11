@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Game } from "../engine/Game.js";
 import type { Move, Mark } from "../engine/index.js";
-import { BoardView } from "./BoardView";
 import { BOTS } from "../engine/ai/registry.js";
 import type { BotId } from "../engine/ai/types";
 import { GameScreen } from "./GameScreen";
@@ -70,12 +69,6 @@ export function SinglePlayer({
     setShowResult(true);
   }
 
-  const shouldShowModal = isOver && showResult;
-
-    const subline = view.nextBoard
-    ? `Volgend miniboard: (${view.nextBoard.row}, ${view.nextBoard.col})`
-    : "Vrije keuze";
-
     const aiTurn = view.currentPlayer === ai && !isOver;
     const subtitle = `vs ${bot.name}`;
 
@@ -86,8 +79,6 @@ export function SinglePlayer({
     return (
     <GameScreen
         view={view}
-        title="Single Player"
-        subtitle={subtitle}
         onMove={handleHumanClick}
         onReset={reset}
         {...(onBack ? { onBack } : {})}

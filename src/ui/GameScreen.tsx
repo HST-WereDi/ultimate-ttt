@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { BoardView } from "./BoardView";
 import type { Move } from "../engine/index.js";
 import type { GameView } from "../engine/Game.js";
@@ -12,8 +12,6 @@ export function GameScreen(props: {
   onBack?: () => void;
 
   // UI tekst
-  title: string;         // bijv "Local Multiplayer" of "Single Player"
-  subtitle?: string;     // bijv "(Billy Random)" of iets anders
   turnText: string;
 
 
@@ -30,8 +28,6 @@ export function GameScreen(props: {
     onMove,
     onReset,
     onBack,
-    title,
-    subtitle,
     boardDisabled = false,
     showResult,
     onCloseResult,
@@ -106,7 +102,9 @@ export function GameScreen(props: {
         </div>
         </div>
 
-      <BoardView view={view} onClickMove={onMove} disabled={boardDisabled} />
+      <div className="board-wrapper">
+        <BoardView view={view} onClickMove={onMove} disabled={boardDisabled} />
+      </div>
 
       {isOver && showResult && (
         <div className="overlay">

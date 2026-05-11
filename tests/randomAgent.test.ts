@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { Game } from "../src/engine/Game.js";
-import { RandomAgent } from "../src/engine/agents/RandomAgent.js";
+import { BillyRandom as RandomAgent } from "../src/engine/ai/BillyRandom.js";
 import { SmallBoard } from "../src/engine/SmallBoard.js";
 import { UltimateBoard } from "../src/engine/UltimateBoard.js";
 
